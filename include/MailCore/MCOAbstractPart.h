@@ -58,7 +58,7 @@ namespace mailcore {
 @property (nonatomic, assign) MCOPartType partType;
 
 /** Returns filename of the part.*/
-@property (nonatomic, copy) NSString * filename;
+@property (nonatomic, copy) NSString * _Nullable filename;
 
 /** Returns MIME type of the part. For example application/data.*/
 @property (nonatomic, copy) NSString * mimeType;
@@ -105,12 +105,9 @@ namespace mailcore {
 - (NSString *) contentTypeParameterValueForName:(NSString *)name;
 
 /** Returns an array with the names of all content type parameters.*/
-- (NSArray * /* NSString */) allContentTypeParametersNames;
+- (NSArray<NSString *> *) allContentTypeParametersNames;
 
-@end
-
-@interface MCOAbstractPart (MCOUnavailable)
-
+#pragma mark - Unavailable initializers
 /** Do not invoke this directly. */
 - (instancetype) init NS_UNAVAILABLE;
 /** Do not invoke this directly. */

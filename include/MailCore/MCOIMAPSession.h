@@ -24,6 +24,7 @@
 @class MCOIndexSet;
 @class MCOIMAPFetchMessagesOperation;
 @class MCOIMAPFetchContentOperation;
+@class MCOIMAPFetchContentToFileOperation;
 @class MCOIMAPFetchParsedContentOperation;
 @class MCOIMAPSearchOperation;
 @class MCOIMAPIdleOperation;
@@ -100,6 +101,8 @@
  as a correct display name.
 */
 @property (nonatomic, copy, readonly) NSString * gmailUserDisplayName DEPRECATED_ATTRIBUTE;
+
+@property (nonatomic, assign, readonly, getter=isIdleEnabled) BOOL idleEnabled;
 
 /**
  When set to YES, the session is allowed open to open several connections to the same folder.
@@ -302,7 +305,7 @@
 - (MCOIMAPAppendMessageOperation *)appendMessageOperationWithFolder:(NSString *)folder
                                                         messageData:(NSData *)messageData
                                                               flags:(MCOMessageFlag)flags
-                                                        customFlags:(NSArray *)customFlags;
+                                                        customFlags:(NSArray<NSString *> *)customFlags;
 
 /**
  Returns an operation to add a message with custom flags to a folder.
@@ -320,7 +323,7 @@
 - (MCOIMAPAppendMessageOperation *)appendMessageOperationWithFolder:(NSString *)folder
                                                      contentsAtPath:(NSString *)path
                                                               flags:(MCOMessageFlag)flags
-                                                        customFlags:(NSArray *)customFlags;
+                                                        customFlags:(NSArray<NSString *> *)customFlags;
 
 /**
  Returns an operation to copy messages to a folder.
@@ -404,7 +407,7 @@
                                                 uids:(MCOIndexSet *)uids
                                                 kind:(MCOIMAPStoreFlagsRequestKind)kind
                                                flags:(MCOMessageFlag)flags
-                                         customFlags:(NSArray *)customFlags;
+                                         customFlags:(NSArray<NSString *> *)customFlags;
 
 
 /**
@@ -425,7 +428,7 @@
                                              numbers:(MCOIndexSet *)numbers
                                                 kind:(MCOIMAPStoreFlagsRequestKind)kind
                                                flags:(MCOMessageFlag)flags
-                                         customFlags:(NSArray *)customFlags;
+                                         customFlags:(NSArray<NSString *> *)customFlags;
 
 /**
  Returns an operation to change labels of messages. Intended for Gmail
@@ -443,7 +446,7 @@
 - (MCOIMAPOperation *) storeLabelsOperationWithFolder:(NSString *)folder
                                               numbers:(MCOIndexSet *)numbers
                                                  kind:(MCOIMAPStoreFlagsRequestKind)kind
-                                               labels:(NSArray *)labels;
+                                               labels:(NSArray<NSString *> *)labels;
 
 /**
  Returns an operation to change labels of messages. Intended for Gmail
@@ -461,7 +464,7 @@
 - (MCOIMAPOperation *) storeLabelsOperationWithFolder:(NSString *)folder
                                                  uids:(MCOIndexSet *)uids
                                                  kind:(MCOIMAPStoreFlagsRequestKind)kind
-                                               labels:(NSArray *)labels;
+                                               labels:(NSArray<NSString *> *)labels;
 
 /** @name Fetching Messages */
 
@@ -847,6 +850,37 @@ vanishedMessages will be set only for servers that support QRESYNC. See [RFC5162
                                                                       number:(uint32_t)number
                                                                       partID:(NSString *)partID
                                                                     encoding:(MCOEncoding)encoding;
+
+/**
+ Returns an operation to fetch an attachment to a file.
+ @param  urgent is set to YES, an additional connection to the same folder might be opened to fetch the content.
+ Operation will be perform in a memory efficient manner.
+
+     MCOIMAPFetchContentToFileOperation * op = [session fetchMessageAttachmentToFileOperationWithFolder:@"INBOX"
+                                                                                                    uid:456
+                                                                                                 partID:@"1.2"
+                                                                                               encoding:MCOEncodingBase64
+                                                                                               filename:filename
+                                                                                                 urgent:YES];
+
+     // Optionally, explicitly enable chunked mode
+     [op setLoadingByChunksEnabled:YES];
+     [op setChunksSize:1024*1024];
+     // need in chunked mode for correct progress indication
+     [op setEstimatedSize:sizeOfAttachFromBodystructure];
+
+     [op start:^(NSError * __nullable error) {
+         ...
+     }];
+
+ */
+- (MCOIMAPFetchContentToFileOperation *) fetchMessageAttachmentToFileOperationWithFolder:(NSString *)folder
+                                                                                     uid:(uint32_t)uid
+                                                                                  partID:(NSString *)partID
+                                                                                encoding:(MCOEncoding)encoding
+                                                                                filename:(NSString *)filename
+                                                                                  urgent:(BOOL)urgent;
+
 
 /** @name General IMAP Actions */
 
