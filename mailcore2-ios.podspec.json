@@ -1,0 +1,32 @@
+{
+  "name": "mailcore2-ios",
+  "version": "0.6.5",
+  "summary": "Mailcore 2 for iOS",
+  "description": "MailCore 2 provide a simple and asynchronous API to work with e-mail protocols IMAP, POP and SMTP.",
+  "homepage": "http://libmailcore.com",
+  "license": {
+    "type": "BSD",
+    "file": "LICENSE"
+  },
+  "authors": "MailCore Authors",
+  "source": {
+    "git": "http://172.16.6.11:8050/Frameworks/mailcore2-ios.git",
+    "tag": "0.6.5"
+  },
+  "platforms": {
+    "ios": "12.0"
+  },
+  "header_dir": "MailCore",
+  "requires_arc": false,
+  "public_header_files": "include/MailCore/*.h",
+  "source_files": "include/MailCore/*.h",
+  "preserve_paths": "include/MailCore/*.h",
+  "vendored_libraries": "lib/libMailCore-ios.a",
+  "libraries": [
+    "xml2",
+    "iconv",
+    "z",
+    "c++",
+    "resolv"
+  ]
+}
